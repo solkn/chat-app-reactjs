@@ -1,13 +1,18 @@
 import { Typography, Avatar, Space, Menu, Dropdown } from "antd";
 import { Link } from "react-router-dom";
 
+
+
+
 const TopBar = () => {
   const onLogOut = () => {
     /**
      * TODO: Handle Logout
      */
   };
+  
   return (
+    
     <div
       style={{
         background: "#fff",
@@ -18,7 +23,7 @@ const TopBar = () => {
       }}
     >
       <Link to="/" style={{ fontWeight: "bold", fontSize: "23px" }}>
-        TC-Book
+        chat-app
       </Link>
       <Dropdown
         overlay={
@@ -34,7 +39,11 @@ const TopBar = () => {
           </Space>
         </div>
       </Dropdown>
+
+      
     </div>
+   
+    
   );
 };
 export default TopBar;

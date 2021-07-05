@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, Row, Col, Button, Pagination } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
-//import TopBar from "../../components/tob-bar";
+import TopBar from "../../components/top-bar";
 
 const Home = () => {
   const [isModalOpen, setModal] = useState(false);
@@ -21,6 +21,7 @@ const Home = () => {
 
   return (
     <>
+    <TopBar/>
       <div
         style={{
           marginTop: "20px",
