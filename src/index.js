@@ -6,14 +6,14 @@ import "antd/dist/antd.css";
 import "./index.css";
 import App from "./App";
 //import reportWebVitals from "./reportWebVitals";
-//import { store } from "./store/store";
+import { store } from "./store/store";
 
 ReactDOM.render(
-  //<Provider>
+  <Provider store= {store}>
     <BrowserRouter>
       <App />
-    </BrowserRouter>,
-  //</Provider>,
+    </BrowserRouter>
+  </Provider>,
   document.getElementById("root")
 );
 

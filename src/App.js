@@ -6,6 +6,7 @@ import "./App.css";
 import HomePage from "./pages/home";
 import LoginPage from "./pages/login";
 import SignUpPage from "./pages/signup";
+import MessengerPage from "./pages/messenger";
 
 const App = () => {
   return (
@@ -20,6 +21,10 @@ const App = () => {
 
       <Route path="/signup">
         <SignUpPage/>
+      </Route>
+
+      <Route path="/messenger">
+        <MessengerPage/>
       </Route>
      
     </Switch>

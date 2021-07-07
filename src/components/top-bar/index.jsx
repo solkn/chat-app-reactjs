@@ -1,49 +1,43 @@
-import { Typography, Avatar, Space, Menu, Dropdown } from "antd";
-import { Link } from "react-router-dom";
-
-
+import { useHistory  } from "react-router-dom";
+import { Layout, Menu } from 'antd';
 
 
 const TopBar = () => {
-  const onLogOut = () => {
-    /**
-     * TODO: Handle Logout
-     */
+ 
+  let history = useHistory();
+
+  const onHome = () =>{
+    history.push("/");
+
+
+  };
+
+  const onLogin = ()=>{
+    history.push("/login");
+
+  };
+
+  const onSignUp =()=>{
+      history.push("/signup");
   };
   
-  return (
-    
-    <div
-      style={{
-        background: "#fff",
-        padding: "10px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
-    >
-      <Link to="/" style={{ fontWeight: "bold", fontSize: "23px" }}>
-        chat-app
-      </Link>
-      <Dropdown
-        overlay={
-          <Menu>
-            <Menu.Item onClick={onLogOut}>Logout</Menu.Item>
-          </Menu>
-        }
-      >
-        <div style={{ display: "flex", flexDirection: "row" }}>
-          <Space direction="horizontal" size="middle">
-            <Typography.Text>sol</Typography.Text>
-            <Avatar size="default">J</Avatar>
-          </Space>
-        </div>
-      </Dropdown>
 
-      
-    </div>
-   
+  const { Header } = Layout;
+  
+  return(
+    <Layout>
+      <Header className="header">
+        <div className="logo" />
+        <Menu theme="dark" mode="horizontal" style={{padding:"0 1000px"}} defaultSelectedKeys={['1']}>
+          <Menu.Item key="1" onClick ={onHome}>Home</Menu.Item>
+          <Menu.Item key="2" onClick ={onLogin}>Login</Menu.Item>
+          <Menu.Item key="3" onClick ={onSignUp}>SignUp</Menu.Item>
+        </Menu>
+        
+      </Header>
     
+    </Layout>
   );
+
 };
 export default TopBar;

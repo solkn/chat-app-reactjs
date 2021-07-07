@@ -1,71 +1,111 @@
-import { Form, Input, Button, Space, Typography } from 'antd';
+import { useEffect } from "react";
+import { Card, Form, Input, Button, Typography, Alert } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { signUpAsync } from "../../store/user/action";
+import TopBar from "../../components/top-bar";
+import BottomBar from "../../components/bottom-bar";
 
 const SignUp = () => {
-  const onFinish = values => {
-    console.log('Received values of form: ', values);
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const { signUpLoading, signUpError, token } = useSelector(
+    (state) => state.user
+  );
+
+  useEffect(() => {
+    if (token) {
+      history.push("/messenger");
+    }
+  }, [token]);
+
+  const handleSubmit = (values) => {
+    const { fName, lName, email, password } = values;
+    dispatch(signUpAsync(fName, lName, email, password));
   };
 
   return (
-    <Form name="complex-form" onFinish={onFinish} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
-      <Form.Item label="fName">
-        <Space>
+
+    <>
+    <TopBar/>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "75vh",
+      }}
+    >
+      <Card style={{ width: "500px" }}>
+        <h1 style={{ textAlign: "center" }}>Sign Up</h1>
+        {signUpError && signUpError.response ? (
+          <Alert
+            message={signUpError.response.data.message}
+            type="error"
+            closable
+            style={{
+              marginTop: 5,
+              marginBottom: 5,
+            }}
+          />
+        ) : null}
+        <Form initialValues={{}} onFinish={handleSubmit}>
           <Form.Item
             name="fName"
-            noStyle
-            rules={[{ required: true, message: 'first name is required' }]}
+            rules={[
+              { required: true, message: "Please input your first name!" },
+            ]}
           >
-            <Input style={{ width: 250,fontStyle:'italic' }} placeholder="Please input" />
+            <Input size="large" placeholder="First Name" />
           </Form.Item>
-      
-        </Space>
-      </Form.Item>
-      <Form.Item label="lName">
-        <Space>
+
           <Form.Item
             name="lName"
-            noStyle
-            rules={[{ required: true, message: 'last name is required' }]}
+            rules={[
+              { required: true, message: "Please input your last name!" },
+            ]}
           >
-            <Input style={{ width: 250,fontStyle:'italic' }} placeholder="Please input" />
+            <Input size="large" placeholder="Last Name" />
           </Form.Item>
-    
-        </Space>
-      </Form.Item>
-      <Form.Item label="Email">
-          
-      <Space>
+
           <Form.Item
             name="email"
-            noStyle
-            rules={[{ required: true, message: 'Email is required' }]}
+            rules={[{ required: true, message: "Please input your email!" }]}
           >
-            <Input style={{ width: 250,fontStyle:'italic'  }} placeholder="Please input" />
+            <Input size="large" placeholder="Email" />
           </Form.Item>
- 
-        </Space>
-       
-      </Form.Item>
 
-      <Form.Item label="Password">
-        <Space>
           <Form.Item
             name="password"
-            noStyle
-            rules={[{ required: true, message: 'password is required' }]}
+            rules={[{ required: true, message: "Please input your password!" }]}
           >
-            <Input style={{ width: 250,fontStyle:'italic'  }} placeholder="Please input" />
+            <Input.Password size="large" placeholder="Password" />
           </Form.Item>
-          
-        </Space>
-      </Form.Item>
-    
-      <Form.Item label=" " colon={false}>
-        <Button type="primary" htmlType="submit">
-          Register
-        </Button>
-      </Form.Item>
-    </Form>
+
+          <Form.Item>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <Button
+                type="primary"
+                htmlType="submit"
+                style={{ width: "200px" }}
+                disabled={signUpLoading}
+                loading={signUpLoading}
+              >
+                Sign Up
+              </Button>
+            </div>
+          </Form.Item>
+        </Form>
+      </Card>
+    </div>
+   
+   <BottomBar/>
+    </>
   );
 };
-
 export default SignUp;

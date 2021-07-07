@@ -1,45 +1,98 @@
-import { Form, Input, Button, Space } from 'antd';
-
+import { useEffect } from "react";
+import { Card, Form, Input, Button, Typography, Alert } from "antd";
+import { Link, useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { loginAsync } from "../../store/user/action";
+import TopBar from "../../components/top-bar";
+import BottomBar from "../../components/bottom-bar";
 
 const Login = () => {
-  const onFinish = values => {
-    console.log('Received values of form: ', values);
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const { loginLoading, loginError, token } = useSelector(
+    (state) => state.user
+  );
+
+  useEffect(() => {
+    if (token) {
+      history.push("/messenger");
+    }
+  }, [token]);
+
+  const handleSubmit = (values) => {
+    const { email, password } = values;
+    dispatch(loginAsync(email, password));
   };
 
   return (
-    <Form name="complex-form" onFinish={onFinish} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
-      <Form.Item label="Email">
-        <Space>
+    <>
+    <TopBar/>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "79vh",
+      }}
+    >
+      <Card style={{ width: "500px" }}>
+        <h1 style={{ textAlign: "center" }}>Login</h1>
+        {loginError && loginError.response ? (
+          <Alert
+            message={loginError.response.data.message}
+            type="error"
+            closable
+            style={{
+              marginTop: 5,
+              marginBottom: 5,
+            }}
+          />
+        ) : null}
+
+        <Form initialValues={{}} onFinish={handleSubmit}>
           <Form.Item
             name="email"
-            noStyle
-            rules={[{ required: true, message: 'Username is required' }]}
+            rules={[{ required: true, message: "Please input your email!" }]}
           >
-            <Input style={{ width: 250,fontStyle:'italic' }} placeholder="Please input" />
+            <Input size="large" placeholder="Email" />
           </Form.Item>
-        </Space>
-      </Form.Item>
-      <Form.Item label="Password">
-          
-      <Space>
+
           <Form.Item
             name="password"
-            noStyle
-            rules={[{ required: true, message: 'Password is required' }]}
+            rules={[{ required: true, message: "Please input your password!" }]}
           >
-            <Input style={{ width: 250, fontStyle:'italic' }} placeholder="Please input" />
+            <Input.Password size="large" placeholder="Password" />
           </Form.Item>
-        </Space>
-       
-      </Form.Item>
-    
-      <Form.Item label=" " colon={false}>
-        <Button type="primary" htmlType="submit">
-          SignIn
-        </Button>
-      </Form.Item>
-    </Form>
+
+          <Form.Item>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <Button
+                type="primary"
+                htmlType="submit"
+                style={{ width: "200px" }}
+                loading={loginLoading}
+                disabled={loginLoading}
+              >
+                Login
+              </Button>
+            </div>
+          </Form.Item>
+          <Form.Item>
+            <Typography.Text>
+              Don't have accout? <Link to="/signup">Sign Up</Link>
+            </Typography.Text>
+          </Form.Item>
+        </Form>
+      </Card>
+    </div>
+
+  <BottomBar/>
+    </>
   );
 };
-
 export default Login;
