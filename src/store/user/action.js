@@ -80,25 +80,22 @@ export const loginAsync = (email, password) => {
  * SignUp Async Action Creater
  */
 
-export const signUpAsync = (fName,lName,email, password) => {
+ export const signUpAsync = (firstName, lastName, email, password) => {
   return async (dispatch, getState) => {
     dispatch(signUpStart());
     try {
       const response = await axios.post(
-        "/api/v1/users/signup",
+        "api/v1/users/signup",
         {
-          fName,
-          lName,
+          firstName,
+          lastName,
           email,
           password,
         }
-
-      )
+      );
       dispatch(signUpSuccess(response.data.user, response.data.token));
     } catch (err) {
       dispatch(signUpError(err));
-      console.log("error has occcurred!");
-
     }
   };
 };

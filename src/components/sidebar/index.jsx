@@ -20,7 +20,7 @@ const SideBar = ()=>{
               defaultOpenKeys={['sub1']}
               style={{ height: '100%' }}
             >
-              <SubMenu key="sub1" icon={<UserOutlined />} title="subnav 1">
+              <SubMenu key="sub1" icon={<UserOutlined />} title="subnav">
                 <Menu.Item key="1">option1</Menu.Item>
                 <Menu.Item key="2">option2</Menu.Item>
                 <Menu.Item key="3">option3</Menu.Item>
@@ -28,7 +28,7 @@ const SideBar = ()=>{
               </SubMenu>
             </Menu>
           </Sider>
-          <Content style={{ padding: '0 24px', minHeight: 280 }}>Content</Content>
+          <Content style={{ padding: '0 24px', minHeight: 260 }}>Content</Content>
         </Layout>
       </Content>
          </Layout>

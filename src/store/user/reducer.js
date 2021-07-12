@@ -47,7 +47,7 @@ const reducer = (state = INITIAL_STATE, action) => {
         signUpError: null,
         signUpLoading: true,
       };
-    case UserActionTypes.SIGN_UP_SUCCESS:
+   case UserActionTypes.SIGN_UP_SUCCESS:
       Cookies.set(
         "AUTH",
         JSON.stringify({
