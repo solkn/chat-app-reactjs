@@ -33,12 +33,10 @@ export const fetchMessageError = (error) =>({
  export const createMessageStart = () =>({
     type:MessageActionTypes.MESSAGE_CREATE_START,
 });
-export const createMessageSuccess = (msgFrom,msg,msgTo) =>({
+export const createMessageSuccess = (message) =>({
    type:MessageActionTypes.MESSAGE_CREATE_SUCCESS,
    payload:{
-       msg,
-       msgFrom,
-       msgTo,
+       message,
    },
 });
 export const createMessageError = (error) =>({
@@ -116,7 +114,7 @@ export const deleteMessageError = (error) =>({
         dispatch(
           fetchMessageSuccess(
           
-            response.data
+            response.data.data
             
           )
          
@@ -127,7 +125,7 @@ export const deleteMessageError = (error) =>({
     };
   };
   
-  export const CreateMessageAsync = (message,messageFrom,messageTo) => {
+  export const createMessageAsync = (msg) => {
     return async (dispatch, getState) => {
       const {
         user: { token },
@@ -137,18 +135,18 @@ export const deleteMessageError = (error) =>({
         const response = await axios.post(
           "/api/v1/messages",
           {
-              message,
-              messageFrom,
-              messageTo,
+             msg,
+             
+             
           },
           {
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "text/json",
             },
           }
         );
-        dispatch(createMessageSuccess(response.data.msg));
+
+        dispatch(createMessageSuccess(response.data.data));
       } catch (err) {
         dispatch(createMessageError(err));
       }
@@ -176,7 +174,7 @@ export const deleteMessageError = (error) =>({
             },
           }
         );
-        dispatch(updateMessageSuccess(response.data.msg));
+        dispatch(updateMessageSuccess(response.data.data));
       } catch (err) {
         dispatch(updateMessageError(err));
       }
@@ -202,7 +200,7 @@ export const deleteMessageError = (error) =>({
             },
           }
         );
-        dispatch(deleteMessageSuccess(response.data.msg));
+        dispatch(deleteMessageSuccess(response.data.data));
       } catch (err) {
         dispatch(deleteMessageError(err));
       }

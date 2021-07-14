@@ -8,7 +8,8 @@ const INITIAL_STATE = {
   updateMessageSuccess: false,
   deleteMessageLoading: false,
   deleteMessageSuccess: false,
-  messages: [],
+  messages: null,
+  message:{},
   createMessageError: null,
   fetchMessagesError: null,
   updateMessageError:null,
@@ -47,7 +48,7 @@ const reducer = (state = INITIAL_STATE, action) => {
         ...state,
         createMessageLoading: false,
         createMessageSuccess: true,
-        messages: [action.payload.msg, ...state.messages],
+        messages: [action.payload.message, ...state.messages],
       };
     case MessageActionTypes.MESSAGE_CREATE_FAILURE:
       return {

@@ -5,10 +5,16 @@ const authCookies = Cookies.get("AUTH") || JSON.stringify({});
 const INITIAL_STATE = {
   loginLoading: false,
   signUpLoading: false,
+  searchUsersLoading:false,
+  fetchUsersLoading:false,
   user: null,
+  users:null,
   token: null,
   signUpError: null,
   loginError: null,
+  searchUserError:null,
+  fetchUsersError:null,
+
   ...JSON.parse(authCookies),
 };
 
@@ -67,6 +73,26 @@ const reducer = (state = INITIAL_STATE, action) => {
         signUpLoading: false,
         signUpError: action.payload.error,
       };
+
+
+      case UserActionTypes.USER_FETCH_START:
+        return {
+          ...state,
+          fetchUsersError: null,
+          fetchUsersLoading: true,
+        };
+      case UserActionTypes.USER_FETCH_SUCCESS:
+        return {
+          ...state,
+          fetchUsersLoading: false,
+          users: action.payload.users,
+        };
+      case UserActionTypes.USER_FETCH_FAILURE:
+        return {
+          ...state,
+          fetchUsersLoading: false,
+          fetchUsersError: action.payload.error,
+        };
 
     case UserActionTypes.LOG_OUT:
       Cookies.remove("AUTH");

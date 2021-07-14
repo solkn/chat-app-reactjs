@@ -47,6 +47,53 @@ export const signUpError = (error) => ({
   },
 });
 
+/**
+ * GET USERS ACTION
+ * @returns ACTION
+ 
+*/
+
+export const fetchUserStart = () => ({
+  type: UserActionTypes.USER_FETCH_START,
+});
+
+export const fetchUserSuccess = (users) => ({
+  type: UserActionTypes.USER_FETCH_SUCCESS,
+  payload: {
+    users,
+  },
+});
+
+export const fetchUserError = (error) => ({
+  type: UserActionTypes.USER_FETCH_FAILURE,
+  payload: {
+    error,
+  },
+});
+
+/**
+ * SEARCH USER ACTION
+ * @returns ACTION
+ */
+ export const searchUserStart = () => ({
+  type: UserActionTypes.USERS_SEARCH_START,
+});
+
+export const searchUserSuccess = (users) => ({
+  type: UserActionTypes.USERS_SEARCH_SUCCESS,
+  payload: {
+    users,
+  },
+});
+
+export const searchUserError = (error) => ({
+  type: UserActionTypes.USERS_SEARCH_ERROR,
+  payload: {
+    error,
+  },
+});
+
+
 export const logOut = () => ({
   type: UserActionTypes.LOG_OUT,
 });
@@ -80,22 +127,73 @@ export const loginAsync = (email, password) => {
  * SignUp Async Action Creater
  */
 
- export const signUpAsync = (firstName, lastName, email, password) => {
+export const signUpAsync = (firstName, lastName, email, password) => {
+    return async (dispatch, getState) => {
+      dispatch(signUpStart());
+      try {
+        const response = await axios.post(
+          "api/v1/users/signup",
+          {
+            firstName,
+            lastName,
+            email,
+            password,
+          }
+        );
+        dispatch(signUpSuccess(response.data.user, response.data.token));
+      } catch (err) {
+        dispatch(signUpError(err));
+    }
+  };
+};
+
+
+export const fetchUsersAsync = () => {
   return async (dispatch, getState) => {
-    dispatch(signUpStart());
+    const {
+      user: { token },
+    } = getState();
+
     try {
-      const response = await axios.post(
-        "api/v1/users/signup",
+      dispatch(fetchUserStart());
+      const response = await axios.get(
+        "/api/v1/users",
         {
-          firstName,
-          lastName,
-          email,
-          password,
+          
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
-      dispatch(signUpSuccess(response.data.user, response.data.token));
+      dispatch(fetchUserSuccess(response.data.user));
     } catch (err) {
-      dispatch(signUpError(err));
+      dispatch(fetchUserError(err));
+    }
+  };
+};
+
+export const searchUsersAsync = (query) => {
+  return async (dispatch, getState) => {
+    const {
+      user: { token },
+    } = getState();
+
+    try {
+      dispatch(searchUserStart());
+      const response = await axios.get(
+        "/api/v1/users/search",
+        {
+          params: {
+            q: query,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      dispatch(searchUserSuccess(response.data.users));
+    } catch (err) {
+      dispatch(searchUserError(err));
     }
   };
 };

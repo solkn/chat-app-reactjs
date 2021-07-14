@@ -89,15 +89,17 @@ const SignUp = () => {
                 justifyContent: "center",
               }}
             >
-              <Button
-                type="primary"
-                htmlType="submit"
-                style={{ width: "200px" }}
-                disabled={signUpLoading}
-                loading={signUpLoading}
-              >
-                Sign Up
-              </Button>
+               <Form.Item>
+                        
+                        <Button
+                          type="primary"
+                          htmlType="submit"
+                          style={{ width: "250px",height:50,
+                          borderRadius:30,display:"block" }}
+                        >
+                          Sign Up
+                        </Button>
+                    </Form.Item>
             </div>
           </Form.Item>
         </Form>

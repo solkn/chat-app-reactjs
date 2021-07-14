@@ -5,40 +5,95 @@ import { logOut } from "../../store/user/action";
 import BottomBar from "../../components/bottom-bar";
 import UserNavBar from "../../components/user_nav";
 import { Input,Form,Button,Spin} from "antd";
-import { fetchMessagesAsync } from "../../store/message/action";
+import { fetchMessagesAsync,createMessageAsync } from "../../store/message/action";
+import { fetchUsersAsync } from "../../store/user/action";
+import { io } from "socket.io-client";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./style.css";
 
 
-const Messenger = () => {
+  const Messenger = () => {
 
   const dispatch = useDispatch();
   const history = useHistory();
-
-
-
-  const { messages,fetchMessagesLoading} = useSelector(
-          state => state.message);
+  const [socket,setSocket] = useState(null);
+  const [arrivalMessage,setArrivalMessage] = useState(null);
   
+  const { messages,fetchMessagesLoading } = useSelector(
+    (state) => state.message);
+
+  const { users,fetchUsersLoading } = useSelector(
+  (state) => state.user);
+
+
+
+  useEffect(()=>{
+   
+    setSocket(io("ws://localhost:8080"));
+
+  },[]);
+// var usersId = [];
+  // users?.map((user)=>(
+  //  usersId.push(user._id)
+  // ));
+ 
+  // useEffect(()=>{
+    
+  //   socket.emit("addUser","this is from client!");
+  
+  // },[socket]);
+
+  useEffect(()=>{
+
+    socket?.emit("addUser","this is from client!")
+    socket?.on("getUsers",data =>{
+      console.log(data)
+    });
+  },[socket]);
 
 
   useEffect(() => {
     
     dispatch(fetchMessagesAsync());
 
+
   }, []);
 
 
-  console.log("messages are now:",messages);
+  useEffect(() => {
+    
+    dispatch(fetchUsersAsync());
+
+  }, []);
+  
+  useEffect(()=>{
+        socket?.on("getMessages",data =>{
+
+          setArrivalMessage({
+            msg:data.messages
+          });
+          
+
+        });
+  },[]);
  
- const handleMessageClick = (id) => {
-    history.push(`/messages/${id}/edit`);
+ const handleSubmit = (values) => {
+     
+      const { msg } = values;
+
+
+     socket.emit("snedMessage",{
+      msg:msg,
+    });
+    
+     
+     dispatch(createMessageAsync(msg));
+
   };
 
 
-  const onSend = () => {
-    dispatch(logOut());
-  }
 
-  if (fetchMessagesLoading || !messages) {
+  if (fetchUsersLoading || !users || fetchMessagesLoading || !messages) {
     return (
       <>
         <UserNavBar />
@@ -61,55 +116,136 @@ const Messenger = () => {
   return (
     <>
     <UserNavBar/>
+ 
+     
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet"/>
 
-    <div id ="messenger" style={{marginLeft:400,marginTop:10,width:500}}>
-         
-             <h2>Messages List</h2>
-          <div>
-            
-            <ul>
-              {
-                //JSON.stringify(messages)
-                 messages.map((message) =>
-                  (<li>{message.msg}</li>
-                 ))
-              }
-            </ul>
-           
-         </div>
-    </div>
-    
-    
-   <Form initialValues={{}} onFinish={onSend}>
-        
-          <Form.Item
-            name="message"
-          >
-            <Input.TextArea rows={4} placeholder="write some thing" 
-                    style={{marginLeft:400,marginTop:10,width:400}} />
-          </Form.Item>
+<div class="container">
 
-          <Form.Item>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <Button
-                type="primary"
-                htmlType="submit"
-                style={{ width: "100px",height:50,marginTop:-115,
-                marginLeft:450,borderRadius:30,display:"block" }}
-              >
-                Send
-              </Button>
+    <div class="page-title">
+        <div class="row gutters">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
             </div>
-          </Form.Item>
-   
-        </Form>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12"> </div>
+        </div>
+    </div>
 
-  <BottomBar style={{marginTop:-200,position:"absolute"}}/>
+    <div class="content-wrapper">
+
+        <div class="row gutters">
+
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+
+                <div class="card m-0">
+
+                    <div class="row no-gutters">
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-3 col-3">
+                            <div class="users-container">
+                                <div class="chat-search-box">
+                                    <div class="input-group">
+                                        <input class="form-control" placeholder="Search"/>
+                                        <div class="input-group-btn">
+                                            <button type="button" class="btn btn-info">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ul class="users">
+                                    {
+                                      users.map((user) =>(
+                                    <li class="person" data-chat="person1">
+                                        <div class="user">
+                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin"/>
+                                            <span class="status busy"></span>
+                                        </div>
+                                        <p class="name-time">
+                                            <span class="name">{user.firstName} {user.lastName}</span>
+                                            <span class="time">{user.email}</span>
+                                        </p>
+                                    </li>
+                                     
+                                     
+                                     ))
+
+                               }
+                                
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-xl-8 col-lg-8 col-md-8 col-sm-9 col-9">
+                            <div class="selected-user">
+                                <span class="name">Chat App</span>
+                            </div>
+                            <div class="chat-container">
+                                <ul class="chat-box chatContainerScroll">
+                                  {
+                                    messages.map((message) =>(
+
+                                      <li class="chat-left">
+                                      <div class="chat-avatar">
+                                          <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin"/>
+                                          <div class="chat-name">Solomon</div>
+                                      </div>
+                                      <div class="chat-text">Hello, I'm Solomon.
+                                          <br/>{message.msg}</div>
+                                      <div class="chat-hour">{message.createdOn} <span class="fa fa-check-circle"></span></div>
+                                  </li>
+
+                                    ))
+                                   
+                                    
+                  
+                  }
+                                  
+                                </ul>
+                               
+
+                <Form initialValues={{}} onFinish={handleSubmit}>
+                      
+                      <Form.Item
+                        name="msg"
+                      >
+                        <Input.TextArea rows={4} placeholder="write some thing" 
+                                style={{marginLeft:100,marginTop:10,width:400}} />
+                      </Form.Item>
+                      <Form.Item>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <Button
+                              type="primary"
+                              htmlType="submit"
+                              style={{ width: "150px",height:50,marginTop:-115,
+                              marginLeft:450,borderRadius:30,display:"block" }}
+                            >
+                              Send
+                            </Button>
+                          </div>
+                        </Form.Item>
+                
+                      </Form>
+
+         
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+  <BottomBar/>
     </>
   );
 };

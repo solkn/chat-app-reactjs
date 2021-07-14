@@ -8,6 +8,7 @@ import LoginPage from "./pages/login";
 import SignUpPage from "./pages/signup";
 import UserHomePage from "./pages/user_home";
 import MessengerPage from "./pages/messenger/";
+import AddMessagePage from "./components/add-message";
 
 const App = () => {
   return (
@@ -31,6 +32,10 @@ const App = () => {
 
       <Route path="/messenger">
         <MessengerPage/>
+      </Route>
+
+      <Route path="/addmessage">
+        <AddMessagePage/>
       </Route>
      
     </Switch>
