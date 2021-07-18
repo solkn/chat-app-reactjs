@@ -115,6 +115,8 @@ export const loginAsync = (email, password) => {
 
       )
       dispatch(loginSuccess(response.data.user, response.data.token));
+      
+      
     } catch (err) {
       dispatch(loginError(err));
       console.log("error has occcurred!");

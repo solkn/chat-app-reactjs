@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { connect, useDispatch, useSelector } from "react-redux";
-import { logOut } from "../../store/user/action";
 import BottomBar from "../../components/bottom-bar";
 import UserNavBar from "../../components/user_nav";
 import { Input,Form,Button,Spin} from "antd";
@@ -10,38 +9,40 @@ import { fetchUsersAsync } from "../../store/user/action";
 import { io } from "socket.io-client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";
+import moment from "moment";
 
 
   const Messenger = () => {
-
   const dispatch = useDispatch();
   const history = useHistory();
-  const [socket,setSocket] = useState(null);
-  const [arrivalMessage,setArrivalMessage] = useState(null);
+  const [socket,setSocket] = useState();
   
   const { messages,fetchMessagesLoading } = useSelector(
     (state) => state.message);
 
-  const { users,fetchUsersLoading } = useSelector(
+  const { users,fetchUsersLoading,token } = useSelector(
   (state) => state.user);
 
 
 
   useEffect(()=>{
    
-    setSocket(io("ws://localhost:8080"));
+    const s = io("ws://localhost:8080");
+     setSocket(s);
+     
+    return() =>{
+          s.disconnect();
+    };
+
+    
 
   },[]);
-// var usersId = [];
-  // users?.map((user)=>(
-  //  usersId.push(user._id)
-  // ));
+
+  var usersId = [];
+  users?.map((user)=>(
+   usersId.push(user._id)
+  ));
  
-  // useEffect(()=>{
-    
-  //   socket.emit("addUser","this is from client!");
-  
-  // },[socket]);
 
   useEffect(()=>{
 
@@ -56,41 +57,49 @@ import "./style.css";
     
     dispatch(fetchMessagesAsync());
 
-
   }, []);
-
 
   useEffect(() => {
     
     dispatch(fetchUsersAsync());
 
   }, []);
+
+    
   
-  useEffect(()=>{
-        socket?.on("getMessages",data =>{
-
-          setArrivalMessage({
-            msg:data.messages
-          });
-          
-
-        });
-  },[]);
- 
  const handleSubmit = (values) => {
      
       const { msg } = values;
 
 
-     socket.emit("snedMessage",{
+     socket.emit("sendMessage",{
       msg:msg,
     });
     
      
      dispatch(createMessageAsync(msg));
+     
+     socket?.on("getMessage",data =>{
+
+      dispatch(fetchMessagesAsync());
+      console.log("data:",data);
+      
+    });
+
+    
 
   };
 
+  useEffect(()=>{
+    socket?.on("getMessage",data =>{
+
+      dispatch(fetchMessagesAsync());
+      
+
+    });
+},[socket]);
+
+  
 
 
   if (fetchUsersLoading || !users || fetchMessagesLoading || !messages) {
@@ -153,15 +162,16 @@ import "./style.css";
                                 </div>
                                 <ul class="users">
                                     {
+                                    
                                       users.map((user) =>(
                                     <li class="person" data-chat="person1">
                                         <div class="user">
-                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin"/>
+                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar6.png" alt="Retail Admin"/>
                                             <span class="status busy"></span>
                                         </div>
                                         <p class="name-time">
                                             <span class="name">{user.firstName} {user.lastName}</span>
-                                            <span class="time">{user.email}</span>
+                                            <span class="time"style ={{marginLeft:20}}>{user.email}</span>
                                         </p>
                                     </li>
                                      
@@ -184,12 +194,13 @@ import "./style.css";
 
                                       <li class="chat-left">
                                       <div class="chat-avatar">
-                                          <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin"/>
-                                          <div class="chat-name">Solomon</div>
+                                          <img src="https://www.bootdey.com/img/Content/avatar/avatar6.png" alt="Retail Admin"/>
+                                          <div class="chat-name">{message.msgFrom.firstName}
+                                          </div>
                                       </div>
-                                      <div class="chat-text">Hello, I'm Solomon.
+                                      <div class="chat-text">
                                           <br/>{message.msg}</div>
-                                      <div class="chat-hour">{message.createdOn} <span class="fa fa-check-circle"></span></div>
+                                      <div class="chat-hour">{moment(message.createdOn).calendar()} <span class="fa fa-check-circle"></span></div>
                                   </li>
 
                                     ))
@@ -220,7 +231,7 @@ import "./style.css";
                               type="primary"
                               htmlType="submit"
                               style={{ width: "150px",height:50,marginTop:-115,
-                              marginLeft:450,borderRadius:30,display:"block" }}
+                              marginLeft:450,borderRadius:30,display:"block"}}
                             >
                               Send
                             </Button>

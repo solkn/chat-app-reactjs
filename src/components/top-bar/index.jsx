@@ -75,22 +75,18 @@ const TopBar = () => {
                         <MDBNavbarLink onClick={onSignUp}>SignUp</MDBNavbarLink>
                       </MDBNavbarItem>
                       <MDBNavbarItem>
-                        <MDBNavbarLink onClick={onComment}>Comment</MDBNavbarLink>
-                      </MDBNavbarItem>
-                      <MDBNavbarItem>
                         <MDBDropdown>
                           <MDBDropdownToggle tag='a' className='nav-link'>
-                            Dropdown
                           </MDBDropdownToggle>
                           <MDBDropdownMenu>
                             <MDBDropdownItem>
-                              <MDBDropdownLink>Action</MDBDropdownLink>
+                              <MDBDropdownLink>Gmail</MDBDropdownLink>
                             </MDBDropdownItem>
                             <MDBDropdownItem>
-                              <MDBDropdownLink>Another action</MDBDropdownLink>
+                              <MDBDropdownLink>Twitter</MDBDropdownLink>
                             </MDBDropdownItem>
                             <MDBDropdownItem>
-                              <MDBDropdownLink>Something else here</MDBDropdownLink>
+                              <MDBDropdownLink>FaceBook</MDBDropdownLink>
                             </MDBDropdownItem>
                           </MDBDropdownMenu>
                         </MDBDropdown>
